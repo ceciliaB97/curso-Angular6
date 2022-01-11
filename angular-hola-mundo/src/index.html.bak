@@ -11,7 +11,7 @@
 	<h1>Hola mundo!</h1>
 	<app-root></app-root>
 
-   <app-saludador></app-saludador>
+<!-- <app-root></app-root> -->
   
 </body>
 </html>
