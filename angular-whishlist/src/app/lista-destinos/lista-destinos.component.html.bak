@@ -1,0 +1,7 @@
+<ul>
+	<li> 
+		<app-destino-viaje *ngfor="let x of destinos" [nombre]="x"></app-destino-viaje>
+	</li>
+</ul>
+
+
