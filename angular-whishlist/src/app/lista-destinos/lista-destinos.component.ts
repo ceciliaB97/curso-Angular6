@@ -1,7 +1,7 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { DestinoViaje } from '../models/destino-viaje.model';
-import { DestinosApiClient } from './../models/destinos-api-client.model';
+import { DestinosApiClient } from '../api-client/destinos-api-client.model';
 
 
 @Component({

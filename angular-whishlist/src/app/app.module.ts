@@ -23,7 +23,7 @@ const routes: Routes = [
  {path:'', redirectTo:'home', pathMatch: 'full'},
  {path:'home', component: ListaDestinosComponent},
  {path:'destino', component: DestinoDetalleComponent}
-];s
+];
 
 @NgModule({
   declarations: [

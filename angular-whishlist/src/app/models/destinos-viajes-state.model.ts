@@ -4,7 +4,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DestinoViaje } from './destino-viaje.model';
-import { DestinosApiClient } from './destinos-api-client.model';
+import { DestinosApiClient } from '../api-client/destinos-api-client.model';
 import { HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 
 // ESTADO
