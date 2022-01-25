@@ -11,4 +11,5 @@ export class AppComponent {
   time = new Observable(observer =>{
     setInterval(() => observer.next(new Date().toString()), 1000)
   });
+
 }
