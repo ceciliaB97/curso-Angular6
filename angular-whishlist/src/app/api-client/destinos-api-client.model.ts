@@ -10,77 +10,19 @@ import { HttpRequest, HttpHeaders, HttpClient, HttpEvent, HttpResponse } from '@
 import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable()
-export class DestinosApiClient { //injectable service
-  destinos: DestinoViaje[] = [];
-  current: Subject<DestinoViaje> = new BehaviorSubject<DestinoViaje>(null);
-  destinosApiClient: any;
+export class DestinosApiClient {
 
   constructor(
-    private store: Store<AppState>,
-    @Inject(forwardRef(() => APP_CONFIG)) private config: AppConfig,
-    private http: HttpClient
-  ) {
-    this.store
-      .select(state => state.destinos)
-      .subscribe((data) => {
-        console.log('destinos sub store');
-        console.log(data);
-        this.destinos = data.items;
-      });
-    this.store
-      .subscribe((data) => {
-        console.log('all store');
-        console.log(data);
-      });
+    private store: Store<AppState>) {
   }
 
   add(d: DestinoViaje) {
-    const headers: HttpHeaders = new HttpHeaders({'X-API-TOKEN': 'token-seguridad'});
-    /*const req = new HttpRequest('POST', this.config.apiEndpoint + '/my', { nuevo: d.nombre }, { headers: headers });
-    this.http.request(req).subscribe((data: any) => {
-      if (data.status === 200) {
-        this.store.dispatch(new NuevoDestinoAction(d));
-        const myDb = db;
-        myDb.destinos.add(d);
-        console.log('todos los destinos de la db!');
-        myDb.destinos.toArray().then(destinos => console.log(destinos))
-      }
-    });*/
-
-
-    this.http.post<any>( this.config.apiEndpoint + '/my', { nuevo: d.nombre }, { headers: headers }).
-    subscribe(data => {
-      if (data.status === 200) {
-        this.store.dispatch(new NuevoDestinoAction(d));
-        const myDb = db;
-        myDb.destinos.add(d);
-        console.log('todos los destinos de la db!');
-        myDb.destinos.toArray().then(destinos => console.log(destinos))
-      }
-    })
-  }
-
-  getById(id: String): DestinoViaje {
-    return this.destinos.filter(function(d) { return id.toString() === id; })[0];
-  }
-
-  getAll(): DestinoViaje[] {
-    return this.destinos;
+    this.store.dispatch(new NuevoDestinoAction(d));
   }
 
   elegir(d: DestinoViaje) {
     // aqui incovariamos al servidor
-    //this.store.dispatch(new ElegidoFavoritoAction(d));
-    this.destinos.forEach(x => x.setSelected(false));
-    d.setSelected(true);
-    this.current.next(d);
+    this.store.dispatch(new ElegidoFavoritoAction(d));
   }
 
-  elegido(e: DestinoViaje) {
-    this.destinosApiClient.elegir(e);
-  }
-
-  subscribeOnChange(fn) {
-    this.current.subscribe(fn);
-  }
 }

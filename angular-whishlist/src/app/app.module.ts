@@ -53,7 +53,7 @@ let reducersInitialState = {
     ListaDestinosComponent,
     DestinoDetalleComponent,
     FormDestinoViajeComponent,
-    NgRxStoreModule
+    //NgRxStoreModule
   ],
   imports: [
     BrowserModule,
