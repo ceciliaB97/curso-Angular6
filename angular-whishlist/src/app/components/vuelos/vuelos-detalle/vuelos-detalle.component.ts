@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-vuelos-detalle-component',
-  templateUrl: './vuelos-detalle-component.component.html',
-  styleUrls: ['./vuelos-detalle-component.component.css']
+  templateUrl: './vuelos-detalle.component.html',
+  styleUrls: ['./vuelos-detalle.component.css']
 })
 @Component({
   selector: 'app-vuelos-detalle',
