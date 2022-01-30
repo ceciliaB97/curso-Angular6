@@ -4,15 +4,15 @@ export class DestinoViaje {
     private selected: boolean = false;
     public servicios: string[];
     id = uuid();
-    //public votes = 0;
+    public votes = 0;
     nombre: string = "";
     imagenUrl: string = "";
 
-    constructor(public n: string, public u: string, public votes: number) {
+    constructor(public n: string, public u: string, public votesNum: number) {
         this.nombre = n;
         this.imagenUrl = u;
         this.servicios = ['pileta', 'desayuno'];
-        this.votes = 0;
+        this.votes = votesNum;
     }
 
     isSelected(): boolean {

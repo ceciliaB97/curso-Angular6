@@ -1,11 +1,11 @@
 import { Component, Inject, Injectable, OnInit, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
-import { DestinoViaje } from '../models/destino-viaje.model';
+import { DestinoViaje } from '../../models/destino-viaje.model';
 import { DestinosApiClient } from '../api-client/destinos-api-client.model';
 import { Store } from '@ngrx/store';
-import { AppState } from '../app.module';
+import { AppState } from '../../app.module';
 import { state } from '@angular/animations';
-import { ElegidoFavoritoAction, NuevoDestinoAction } from '../models/destinos-viajes-state.model';
+import { ElegidoFavoritoAction, NuevoDestinoAction } from '../../models/destinos-viajes-state.model';
 
 
 @Component({

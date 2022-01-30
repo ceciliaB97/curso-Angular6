@@ -2,14 +2,14 @@ import { InjectionToken , Injectable } from '@angular/core';
 import {  Store } from '@ngrx/store';
 import { HttpClientModule, HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import Dexie from 'dexie';
-import { DestinoViaje } from '../models/destino-viaje.model';
+import { DestinoViaje } from '../../models/destino-viaje.model'; //'./models/destino-viaje.model';
 
 
 
 import {
     DestinosViajesState,
     InitMyDataAction
-  } from '../models/destinos-viajes-state.model';
+  } from '../../models/destinos-viajes-state.model';
 
 
 // app config
