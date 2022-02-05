@@ -19,8 +19,8 @@ export class LoginComponent implements OnInit {
     this.mensajeError = '';
     if (!this.authService.login(username, password)) {
       this.mensajeError = 'Login incorrecto.';
-      setTimeout(function () {
-        this.mensajeError = '';
+      setTimeout(function (this:any) {
+        this.mensajeError='';
       }.bind(this), 2500);
     }
     return false;

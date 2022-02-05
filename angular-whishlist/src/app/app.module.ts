@@ -1,8 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, InjectionToken, APP_INITIALIZER, Injectable } from '@angular/core';
+import {
+  NgModule,
+  InjectionToken,
+  APP_INITIALIZER,
+  Injectable,
+} from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { StoreModule as NgRxStoreModule, ActionReducerMap, Store } from '@ngrx/store';
+import {
+  StoreModule as NgRxStoreModule,
+  ActionReducerMap,
+  Store,
+} from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import Dexie from 'dexie';
@@ -13,7 +22,7 @@ import {
   intializeDestinosViajesState,
   reducerDestinosViajes,
   DestinosViajesEffects,
-  InitMyDataAction
+  InitMyDataAction,
 } from './models/destinos-viajes-state.model';
 
 import { AppComponent } from '././app.component';
@@ -35,6 +44,17 @@ import { VuelosDetalleComponent } from './components/vuelos/vuelos-detalle/vuelo
 import { VuelosComponentComponent } from './components/vuelos/vuelos/vuelos.component';
 import { ReservasModule } from './reservas/reservas.module';
 
+//app config
+export interface AppConfig {
+  apoEndpoint: String;
+}
+
+const APP_CONFIG_VALUE: AppConfig = {
+  apoEndpoint: 'http://localhost:3000',
+};
+export const APP_CONFIG = new InjectionToken<AppConfig>('app.config');
+//fin app config
+
 export const childrenRoutesVuelos: Routes = [
   { path: '', redirectTo: 'main', pathMatch: 'full' },
   { path: 'main', component: VuelosMainComponentComponent },
@@ -49,14 +69,14 @@ const routes: Routes = [
   {
     path: 'protected',
     component: ProtectedComponent,
-    canActivate: [UsuarioLogueadoGuard]
+    canActivate: [UsuarioLogueadoGuard],
   },
   {
     path: 'vuelos',
     component: VuelosComponentComponent,
     canActivate: [UsuarioLogueadoGuard],
-    children: childrenRoutesVuelos
-  }
+    children: childrenRoutesVuelos,
+  },
 ];
 
 // redux init
@@ -64,9 +84,9 @@ export interface AppState {
   destinos: DestinosViajesState;
 }
 
-const reducers: ActionReducerMap<AppState> = {
+/*const reducers: ActionReducerMap<AppState>={
   destinos: reducerDestinosViajes
-};
+};*/
 
 let reducersInitialState = {
   destinos: intializeDestinosViajesState()
@@ -98,14 +118,21 @@ let reducersInitialState = {
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
-    NgRxStoreModule.forRoot(reducers, { initialState: reducersInitialState }),
+    NgRxStoreModule.forRoot(reducerDestinosViajes),
     EffectsModule.forRoot([DestinosViajesEffects]),
     StoreModule.forRoot({}, {}),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
     ReservasModule,
-    
   ],
-  providers: [AuthService, UsuarioLogueadoGuard], //DestinosApiClient
-  bootstrap: [AppComponent]
+  providers: [
+    AuthService,
+    UsuarioLogueadoGuard,
+    { provide: APP_CONFIG, useValue: APP_CONFIG_VALUE },
+  ],
+  //DestinosApiClient
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

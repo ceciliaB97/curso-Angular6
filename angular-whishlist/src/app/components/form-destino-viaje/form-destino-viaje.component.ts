@@ -1,10 +1,11 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, forwardRef, Inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, ValidatorFn } from '@angular/forms';
 import { EventEmitter } from '@angular/core';
 import { DestinoViaje } from '../../models/destino-viaje.model';
 import { fromEvent } from 'rxjs';
 import { map, filter, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
+import { AppConfig, APP_CONFIG } from '../api-client/app-config';
 
 @Component({
   selector: 'app-form-destino-viaje',
@@ -14,64 +15,48 @@ import { ajax, AjaxResponse } from 'rxjs/ajax';
 export class FormDestinoViajeComponent implements OnInit {
   @Output() onItemAdded: EventEmitter<DestinoViaje>;
   fg: FormGroup;
-  minLongitud = 3;
-  searchResults: any; //string[];
+  minLongitud = 5;
+  searchResult!: any; //string[];
 
-  constructor(fb: FormBuilder) {
-    this.onItemAdded = new EventEmitter();
-    this.fg = fb.group({
-      nombre: ['', Validators.compose([
-        Validators.required,
-        this.nombreValidator,
-        this.nombreValidatorParametrizable(this.minLongitud)
-      ])],
-      url: ['']
+  constructor(fb: FormBuilder, @Inject(forwardRef(()=>APP_CONFIG)) private config: AppConfig) { 
+    this.onItemAdded=new EventEmitter();
+    this.fg=fb.group({
+      nombre:['', [Validators.required, Validators.minLength(5), Validators.pattern("[a-zA-Z]*")]],
+      url:['']
     });
 
-    this.fg.valueChanges.subscribe((form: any) => {
-      console.log('se cambio el formulario', form);
+    this.fg.valueChanges.subscribe((form:any)=>{
+      console.log('cambio el formulario',form);
+    });
+    this.fg.controls['nombre'].valueChanges.subscribe((value:string)=>{
+      console.log('nombre cambio:', value);
     });
   }
 
   ngOnInit(): void {
-    let elemNombre = <HTMLInputElement>document.getElementById('nombre');
-    fromEvent(elemNombre, 'input').pipe(
-      map((e: KeyboardEvent) => (e.target as HTMLInputElement).value),
-      filter(text => text.length > 2),
-      debounceTime(200),
-      distinctUntilChanged(),
-      switchMap(() => ajax('/assets/datos.json'))
-
-    ).subscribe(AjaxResponse => {
-      this.searchResults = AjaxResponse.response;
-    });
+    let elemNombre=<HTMLInputElement>document.getElementById('nombre');
+   fromEvent(elemNombre, 'input')
+   .pipe(
+     map((event) => (event.target as HTMLInputElement).value),
+     filter(text=>text.length>2),
+     debounceTime(200),
+     distinctUntilChanged(),
+     switchMap((text:string)=> ajax(`${this.config.apiEndpoint}/ciudades?q=${text}`))
+   ).subscribe(AjaxResponse=>this.searchResult=AjaxResponse.response);
   }
 
-  guardar(nombre: string, url: string): boolean {
-    let d = new DestinoViaje(nombre, url);
+  guardar(nombre:string, url:string):boolean{
+    const d= new DestinoViaje(nombre, url, 0);
     this.onItemAdded.emit(d);
     return false;
   }
 
-  nombreValidator(control: FormControl): {
-    [s: string]: boolean
-  } {
-    const l = control.value.toString().trim().length;
-    if (l > 0 && l < 5) {
-      return { InvalidNombre: true };
+  /*nombreValidator(control: FormControl): {[s: string]: boolean } {
+    let l =control.value.toString().trim().length ;
+    if (l>0 && l<5) {
+      return {invalidNombre: true};
     }
-    return { InvalidNombre: false };
-  }
-
-
-  nombreValidatorParametrizable(minLong: number): ValidatorFn {
-    return (control: FormControl): { [s: string]: boolean } | null => {
-      const l = control.value.toString().trim().length;
-      if (l > 0 && l < minLong) {
-        return { 'minLongNombre': true };
-      }
-      return null;
-    };
-  }
+    return "null";
+  }*/
 
 }
