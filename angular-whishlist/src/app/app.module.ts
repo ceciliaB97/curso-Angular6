@@ -28,7 +28,7 @@ import { LoginComponent } from './components/login/login/login.component';
 import { ProtectedComponent } from './components/protected/protected/protected.component';
 import { UsuarioLogueadoGuard } from './guards/usuario-logueado/usuario-logueado.guard';
 import { AuthService } from './services/auth.service';
-import { DestinosApiClient } from './components/api-client/destinos-api-client.model';
+// import { DestinosApiClient } from './components/api-client/destinos-api-client.model';
 import { VuelosMainComponentComponent } from './components/vuelos/vuelos-main/vuelos-main.component';
 import { VuelosMasInfoComponentComponent } from './components/vuelos/vuelos-mas-info/vuelos-mas-info.component';
 import { VuelosDetalleComponent } from './components/vuelos/vuelos-detalle/vuelos-detalle.component';
@@ -105,7 +105,7 @@ let reducersInitialState = {
     ReservasModule,
     
   ],
-  providers: [DestinosApiClient, AuthService, UsuarioLogueadoGuard],
+  providers: [AuthService, UsuarioLogueadoGuard], //DestinosApiClient
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ReservasApiClientService } from '../reservas-api-client.service';
 
 @Component({
   selector: 'app-reservas-listado',
@@ -7,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReservasListadoComponent implements OnInit {
 
-  constructor() { }
+  //private api: ReservasApiClientService
+  constructor(public api: ReservasApiClientService) { }
 
   ngOnInit(): void {
   }
