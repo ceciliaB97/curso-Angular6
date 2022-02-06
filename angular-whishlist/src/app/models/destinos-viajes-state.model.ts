@@ -14,13 +14,13 @@ export interface DestinosViajesState {
   favorito: DestinoViaje;
 }
 
-export function intializeDestinosViajesState() {
+export const initializeDestinosViajesState = function () {
   return {
     items: [],
     loading: false,
     favorito: null,
   };
-}
+};
 
 // ACCIONES
 export enum DestinosViajesActionTypes {
