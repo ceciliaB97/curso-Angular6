@@ -19,7 +19,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  intializeDestinosViajesState,
+  initializeDestinosViajesState,
   reducerDestinosViajes,
   DestinosViajesEffects,
   InitMyDataAction,
@@ -43,6 +43,12 @@ import { VuelosMasInfoComponentComponent } from './components/vuelos/vuelos-mas-
 import { VuelosDetalleComponent } from './components/vuelos/vuelos-detalle/vuelos-detalle.component';
 import { VuelosComponentComponent } from './components/vuelos/vuelos/vuelos.component';
 import { ReservasModule } from './reservas/reservas.module';
+import { DestinoViaje } from './models/destino-viaje.model';
+// import { init_app } from './components/api-client/app-config';
+import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'dexie';
+import { flatMap, from } from 'rxjs';
 
 //app config
 export interface AppConfig {
@@ -89,9 +95,99 @@ export interface AppState {
 };*/
 
 let reducersInitialState = {
-  destinos: intializeDestinosViajesState()
+  destinos: initializeDestinosViajesState(),
 };
 // fin redux init
+
+@Injectable()
+export class AppLoadService {
+  constructor(private store: Store<AppState>, private http: HttpClient) {}
+  async initializeDestinosViajesState(): Promise<any> {
+    const headers: HttpHeaders = new HttpHeaders({
+      'X-API-TOKEN': 'token-securidad',
+    });
+    const req = new HttpRequest('GET', APP_CONFIG_VALUE.apoEndpoint + '/my', {
+      headers: headers,
+    });
+    const response: any = await this.http.request(req).toPromise();
+    this.store.dispatch(new InitMyDataAction(response.body));
+  }
+}
+
+export function init_app(appLoadService: AppLoadService): () => Promise<any> {
+  return () => appLoadService.initializeDestinosViajesState();
+}
+
+//dexie db
+export class Translation {
+  constructor(
+    public id: number,
+    public lang: string,
+    public key: string,
+    public value: string
+  ) {}
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MyDatabase extends Dexie {
+  destinos!: Dexie.Table<DestinoViaje, number>;
+  translations!: Dexie.Table<Translation, number>;
+  constructor() {
+    super('MyDatabase');
+    this.version(1).stores({
+      destinos: '++id,nombre, imagenurl',
+    });
+    this.version(2).stores({
+      destinos: '++id,nombre, imagenurl',
+      translations: '++id, lang, key, value',
+    });
+  }
+}
+
+export const db = new MyDatabase();
+//fin dexie
+
+//i18n ini
+class TranslationLoader implements TranslateLoader {
+  constructor(private http: HttpClient) {}
+  getTranslation(lang: string): Observable<any> {
+    const promise = db.translations
+      .where('lang')
+      .equals(lang)
+      .toArray()
+      .then((results) => {
+        if (results.length === 0) {
+          return this.http
+            .get<Translation[]>(
+              APP_CONFIG_VALUE.apoEndpoint + '/api/translation?lang=' + lang
+            )
+            .toPromise()
+            .then((apiResults) => {
+              db.translations.bulkAdd(apiResults);
+              return apiResults;
+            });
+        }
+        return results;
+      })
+      .then((traducciones) => {
+        console.log('traduccines cargadas');
+        console.log(traducciones);
+        return traducciones;
+      })
+      .then((traducciones) => {
+        return traducciones.map((t) => ({ [t.key]: t.value }));
+      });
+    return from(promise).pipe(flatMap((elems) => from(elems)));
+  }
+}
+
+function HttpLoaderFactory(http: HttpClient) {
+  return new TranslationLoader(http);
+}
+
+//end i18n
 
 @NgModule({
   declarations: [
@@ -126,13 +222,27 @@ let reducersInitialState = {
       logOnly: environment.production,
     }),
     ReservasModule,
+    TranslateModule.forRoot({
+      loader:{
+        provide:TranslateLoader,
+        useFactory:(HttpLoaderFactory),
+        deps:[HttpClient]
+      }
+    }),
   ],
   providers: [
     AuthService,
     UsuarioLogueadoGuard,
     { provide: APP_CONFIG, useValue: APP_CONFIG_VALUE },
+    AppLoadService,
+    MyDatabase,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: init_app,
+      deps: [AppLoadService],
+      multi: true,
+    },
   ],
-  //DestinosApiClient
   bootstrap: [AppComponent],
 })
 export class AppModule {}
