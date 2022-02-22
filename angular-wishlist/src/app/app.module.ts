@@ -49,6 +49,7 @@ import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'dexie';
 import { flatMap, from } from 'rxjs';
+import { EspiameDirective } from './espiame.directive';
 
 //app config
 export interface AppConfig {
@@ -207,6 +208,7 @@ function HttpLoaderFactory(http: HttpClient) {
     VuelosMainComponentComponent,
     VuelosMasInfoComponentComponent,
     VuelosDetalleComponent,
+    EspiameDirective,
     //NgRxStoreModule
   ],
   imports: [
@@ -229,6 +231,7 @@ function HttpLoaderFactory(http: HttpClient) {
         deps:[HttpClient]
       }
     }),
+    NgxMapboxGLModule
   ],
   providers: [
     AuthService,
