@@ -9,7 +9,7 @@ export class SaludadorComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit() {
   }
 
 }
