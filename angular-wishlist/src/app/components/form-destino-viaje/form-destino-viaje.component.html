@@ -6,7 +6,7 @@ formGroupName="fg"
         <label for="nombre">Nombre</label>
         <input type="text" class="form-control" id="nombre" placeholder="Ingresar nombre..." formControlName='nombre'>
         <ul>
-            <li *ngFor="let r of searchResults;">{{r}}</li>
+            <li *ngFor="let r of searchResult;">{{r}}</li>
         </ul>
         <div *ngIf="!fg.controls['nombre'].valid" style="color: red;">Nombre invalido</div>
         <div *ngIf="!fg.controls['nombre'].hasError('required')" style="color: red;">Nombre requerido</div>
